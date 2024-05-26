@@ -22,4 +22,13 @@ export default {
   getToken() {
     return localStorage.getItem('user-token');
   },
+  async checkToken() {
+    try {
+      const response = await axiosInstance.get(`${API_URL}/user`);
+      return response.data; // Se a resposta for bem-sucedida, o token é válido
+    } catch (error) {
+      // Se houver um erro, o token pode não ser válido
+      throw error.response ? error.response.data : new Error('Erro desconhecido');
+    }
+  },
 };

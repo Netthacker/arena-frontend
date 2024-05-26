@@ -11,14 +11,15 @@ export default defineComponent({
     const router = useRouter();
     const loading = ref(true);
 
-    onBeforeMount(() => {
+    onBeforeMount(async () => {
       {
-        const token = authService.getToken();
-        if(!token) {
-          router.push('/login');
-        } else{
+        try{
+          await authService.checkToken();
           loading.value = false;
+        }catch(error){
+          router.push('/login');
         }
+
       }
     });
     return {
