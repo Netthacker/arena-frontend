@@ -39,46 +39,57 @@ export default defineComponent({
 
 });
 </script>
-
 <template>
-    <v-container v-if="loading">
-      <v-row>
-        <v-col>
-            <h1>Carregando...</h1>
-        </v-col>
-      </v-row>
-    </v-container>
-    <v-container v-else>
-      <Header />
-      <Sidebar />
-      <v-main class="dashboard-main">
+  <v-container v-if="loading">
+    <v-row>
+      <v-col>
+        <h1>Carregando...</h1>
+      </v-col>
+    </v-row>
+  </v-container>
+  <v-app v-else>
+    <v-row no-gutters>
+      <v-col cols="auto">
+    <Sidebar />
+      </v-col>
+   <v-col cols="12" style="padding: 0;">
         <v-container>
-          <v-row>
-            <v-col cols="12" md="4">
-              <DashboardCard
-                title="Comandas em Aberto"
-                subtitle="Número de comandas"
-                content="15"
-              />
-            </v-col>
-            <v-col cols="12" md="4">
-              <DashboardCard
-                title="Valor Recebido em Caixa"
-                subtitle="Hoje"
-                content="R$ 1.500,00"
-              />
-            </v-col>
-            <v-col cols="12" md="4">
-              <DashboardCard
-                title="Total de Pedidos"
-                subtitle="Hoje"
-                content="30"
-              />
+          <v-row justify="center">
+            <v-col cols="12" md="12">
+              <Header />
             </v-col>
           </v-row>
         </v-container>
-      </v-main>
-    </v-container>
+    <v-main class="dashboard-main">
+      <v-container>
+        <v-row>
+          <v-col cols="12" md="4">
+            <DashboardCard
+              title="Comandas em Aberto"
+              subtitle="Número de comandas"
+              content="15"
+            />
+          </v-col>
+          <v-col cols="12" md="4">
+            <DashboardCard
+              title="Valor Recebido em Caixa"
+              subtitle="Hoje"
+              content="R$ 1.500,00"
+            />
+          </v-col>
+          <v-col cols="12" md="4">
+            <DashboardCard
+              title="Total de Pedidos"
+              subtitle="Hoje"
+              content="30"
+            />
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
+   </v-col>
+  </v-row>
+  </v-app>
 </template>
 
 <style scoped>

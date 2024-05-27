@@ -21,21 +21,27 @@ export default defineComponent({
 
 
 <template>
-  <v-card>
-    <v-row>
-      <v-col cols="12" md="12">
-        <v-app-bar app color="primary" dark>
-              <v-toolbar-title style="margin-left:15px">Arena Online</v-toolbar-title>
-            <v-col cols="12" md="1">
-              <v-btn
-                color="grey-darken-4"
-                icon="mdi-logout"
-                @click="logout"
-                dark>
-              </v-btn>
-            </v-col>
-        </v-app-bar>
-      </v-col>
+  <v-card
+  app
+  color="primary"
+  class="mx-auto"
+  height="50px"
+  >
+    <v-row class=" items-center">
+      <v-toolbar-title class="my-5 ml-5">Arena Online</v-toolbar-title>
+        <v-btn
+          flat
+          size="small"
+          color="primary"
+           class="mx-5 my-4 align-self-center"
+           length="24"
+          thickness="2"
+          vertical
+          icon="mdi-logout"
+          @click="logout"
+          dark>
+        </v-btn>
+
     </v-row>
   </v-card>
 </template>
