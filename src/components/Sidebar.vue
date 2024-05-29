@@ -1,8 +1,30 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import localStorageService from '@/services/localStorageService';
+import { defineComponent,ref, onMounted } from 'vue';
 
 export default defineComponent({
   name: 'Sidebar',
+  setup(){
+    const userData = ref<{ name: string; email: string } | null>(null);
+
+    const loadUserData = () => {
+      const data = localStorageService.getUserData();
+      if (data) {
+        userData.value = data;
+      } else {
+        alert('Nenhum dado encontrado.');
+      }
+    };
+
+    onMounted(() => {
+      loadUserData()
+    })
+
+    return{
+      userData
+    }
+
+  },
 });
 </script>
 
@@ -17,8 +39,8 @@ export default defineComponent({
     <v-list>
       <v-list-item
         prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
-        subtitle="sandra_a88@gmailcom"
-        title="Sandra Adams"
+        :subtitle="userData?.email"
+        :title="userData?.name"
       ></v-list-item>
     </v-list>
 

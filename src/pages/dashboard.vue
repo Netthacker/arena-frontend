@@ -21,15 +21,14 @@ export default defineComponent({
 
     onBeforeMount(async () => {
       {
-        loading.value = false;
-        /**
+        //admin@teste.com
+        //123456
           try{
             await authService.checkToken();
             loading.value = false;
           }catch(error){
             router.push('/login');
           }
-         */
       }
     });
     return {

@@ -1,13 +1,15 @@
 import axiosInstance from './axiosInstance';
+import localStorageService from './localStorageService';
 
-const API_URL = 'http://arena.test/api';
+//const API_URL = 'http://arena.test/api';
+const API_URL = 'http://127.0.0.1:8000/api';
 
 export default {
   login(email: string, password: string) {
     return axiosInstance.post(`${API_URL}/sigin`, { email, password })
       .then(response => {
         if (response.data.token) {
-          localStorage.setItem('user-token', response.data.token);
+          localStorageService.setToken(response.data.token);
         }
         return response.data;
       })
@@ -17,18 +19,22 @@ export default {
       });
   },
   logout() {
-    localStorage.removeItem('user-token');
+    return localStorageService.removeToken();
   },
   getToken() {
-    return localStorage.getItem('user-token');
+    return localStorageService.getToken();
   },
   async checkToken() {
-    try {
-      const response = await axiosInstance.get(`${API_URL}/user`);
-      return response.data; // Se a resposta for bem-sucedida, o token é válido
-    } catch (error) {
-      // Se houver um erro, o token pode não ser válido
-      throw error.response ? error.response.data : new Error('Erro desconhecido');
-    }
+    return await axiosInstance.get(`${API_URL}/user`)
+    .then(response=>{
+      if(response.data.data){
+        localStorageService.setUserData(response.data.data)
+      }
+      return response.data
+    })
+    .catch(error => {
+        // Propaga o erro para ser tratado no componente de login
+        throw error.response ? error.response.data : new Error('Erro desconhecido');
+      });
   },
 };
