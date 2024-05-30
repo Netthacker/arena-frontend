@@ -32,11 +32,12 @@ const lightTheme = {
 const darkTheme = {
   dark: true,
   colors: {
-    background: '#000000',
-    surface: '#000000',
+
+    background: '#333333',
+    surface: '#1F1F1F',
     primary: '#FFA500',  // Laranja
     'primary-darken-1': '#FF8C00',
-    secondary: '#FFA500', // Laranja
+    secondary: '#FFC04D',
     'secondary-darken-1': '#FF8C00',
     error: '#CF6679',
     info: '#BB86FC',
