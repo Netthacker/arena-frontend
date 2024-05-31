@@ -2,6 +2,7 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import localStorageService from '@/services/localStorageService';
+import authService from '@/services/authService';
 
 export default defineComponent({
   name: 'Sidebar',
@@ -11,25 +12,31 @@ export default defineComponent({
     const route = useRoute();
 
     const loadUserData = () => {
-      const data = localStorageService.getUserData();
+      const data = localStorageService.getUserData()
       if (data) {
-        userData.value = data;
+        userData.value = data
       } else {
         alert('Nenhum dado encontrado.');
       }
     };
 
+    const logout = async () => {
+      await authService.logout();
+      router.push('/login');
+    };
+
     const navigate = (path: string) => {
-      router.push({ path });
+      router.push({ path })
     };
 
     onMounted(() => {
-      loadUserData();
+      loadUserData()
     });
 
     return {
       userData,
       navigate,
+      logout,
       route
     };
   },
@@ -40,7 +47,7 @@ export default defineComponent({
   <v-navigation-drawer app permanent expand-on-hover rail>
     <v-list>
       <v-list-item
-        prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
+        prepend-icon="mdi-account"
         :subtitle="userData?.email"
         :title="userData?.name"
       ></v-list-item>
@@ -50,27 +57,59 @@ export default defineComponent({
 
     <v-list nav>
       <v-list-item
-        prepend-icon="mdi-folder"
-        title="My Files"
-        value="myfiles"
-        :class="{'selected-item': route.path === '/myfiles'}"
-        @click="navigate('/myfiles')"
+        :active="route.path === '/dashboard'"
+        prepend-icon="mdi-apps-box"
+        title="Início"
+        value="dashboard"
+        :class="{'selected-item': route.path === '/dashboard'}"
+        @click="navigate('/dashboard')"
       ></v-list-item>
       <v-list-item
-        prepend-icon="mdi-account-multiple"
-        title="Shared with me"
-        value="shared"
-        :class="{'selected-item': route.path === '/shared'}"
-        @click="navigate('/shared')"
+        :active="route.path === '/arenas'"
+        prepend-icon="mdi-city-variant"
+        title="Arenas"
+        value="arenas"
+        :class="{'selected-item': route.path === '/arenas'}"
+        @click="navigate('/arenas')"
       ></v-list-item>
       <v-list-item
-        prepend-icon="mdi-star"
-        title="Starred"
-        value="starred"
-        :class="{'selected-item': route.path === '/starred'}"
-        @click="navigate('/starred')"
+        :active="route.path === '/requests'"
+        prepend-icon="mdi-application-edit"
+        title="Comandas"
+        value="requests"
+        :class="{'selected-item': route.path === '/requests'}"
+        @click="navigate('/requests')"
       ></v-list-item>
+      <v-list-item
+        :active="route.path === '/products'"
+        prepend-icon="mdi-package-variant-closed"
+        title="Produtos"
+        value="products"
+        :class="{'selected-item': route.path === '/products'}"
+        @click="navigate('/products')"
+      ></v-list-item>
+      <v-list-item
+        prepend-icon="mdi-account-cog"
+        :active="route.path === '/users'"
+        title="Configurações de Usuário"
+        value="users"
+        :class="{'selected-item': route.path === '/users'}"
+        @click="navigate('/users')"
+      ></v-list-item>
+
     </v-list>
+
+
+    <template v-slot:append>
+            <v-list-item
+            prepend-icon="mdi-logout"
+            @click="logout"
+            title="Sair"
+            >
+        </v-list-item>
+        </template>
+
+
   </v-navigation-drawer>
 </template>
 
@@ -81,12 +120,13 @@ export default defineComponent({
 
 .v-list-item:hover {
   background-color: #FFA500;
-  color: #333333;
+  color: black;
 }
 
 .selected-item {
   background-color: #FFC04D;
-  color: #333333;
+  color: black;
+  font-weight: bold;
 }
 
 .selected-item .v-icon {
