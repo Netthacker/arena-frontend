@@ -1,8 +1,14 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 
 export default defineComponent({
   name: 'Header',
+  props: {
+    name: {
+      type:  String as PropType<String>,
+      required: true,
+    },
+  },
   setup() {
 
 
@@ -21,7 +27,7 @@ export default defineComponent({
   height="50px"
   >
     <v-row class=" items-center">
-      <v-toolbar-title class="my-5 ml-5">Arena Online</v-toolbar-title>
+      <v-toolbar-title class="my-5 ml-5">{{name}}</v-toolbar-title>
 
     </v-row>
   </v-card>

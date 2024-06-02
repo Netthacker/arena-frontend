@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 import authService from '../services/authService';
 import Header from '@/components/Header.vue';
 import Sidebar from '@/components/Sidebar.vue';
-import DashboardCard from '@/components/DashboardCard.vue';
+import Lista from '@/components/Lista.vue';
 
 
 export default defineComponent({
@@ -12,12 +12,25 @@ export default defineComponent({
   components: {
     Header,
     Sidebar,
-    DashboardCard,
+    Lista,
   },
 
   setup(){
     const router = useRouter();
     const loading = ref(true);
+
+    const tableHeaders = ref([
+      { title: 'Name', key: 'name', },
+      { title: 'Email', key: 'email' },
+      { title: 'Age', key: 'age' },
+      { title: 'Actions', key: 'actions', sortable: false}
+    ]);
+
+    const tableItems = ref([
+      { name: 'John Doe', email: 'john@example.com', age: 28 },
+      { name: 'Jane Smith', email: 'jane@example.com', age: 34 },
+      // Add more items as needed
+    ]);
 
     onBeforeMount(async () => {
       {
@@ -33,6 +46,8 @@ export default defineComponent({
     });
     return {
       loading,
+      tableHeaders,
+      tableItems
     };
   },
 
@@ -55,36 +70,13 @@ export default defineComponent({
         <v-container>
           <v-row justify="center">
             <v-col cols="12" md="12">
-              <Header />
-              Aqui vai ficar a parte da Arena
+              <Header name="Arenas"/>
             </v-col>
           </v-row>
         </v-container>
     <v-main class="dashboard-main">
       <v-container>
-        <v-row>
-          <v-col cols="12" md="4">
-            <DashboardCard
-              title="Comandas em Aberto"
-              subtitle="Número de comandas"
-              content="15"
-            />
-          </v-col>
-          <v-col cols="12" md="4">
-            <DashboardCard
-              title="Valor Recebido em Caixa"
-              subtitle="Hoje"
-              content="R$ 1.500,00"
-            />
-          </v-col>
-          <v-col cols="12" md="4">
-            <DashboardCard
-              title="Total de Pedidos"
-              subtitle="Hoje"
-              content="30"
-            />
-          </v-col>
-        </v-row>
+        <Lista :headers="tableHeaders" :items="tableItems"/>
       </v-container>
     </v-main>
    </v-col>
