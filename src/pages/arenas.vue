@@ -1,11 +1,13 @@
 <script lang="ts">
-import { defineComponent, onBeforeMount, ref } from 'vue';
+import { defineComponent, onBeforeMount, ref, watch, computed, toRaw } from 'vue';
 import { useRouter } from 'vue-router';
-import authService from '../services/authService';
+
 import Header from '@/components/Header.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import Lista from '@/components/Lista.vue';
 
+import arenaService from '../services/arenaService';
+import utils from '../plugins/utils';
 
 export default defineComponent({
   name: 'Arenas',
@@ -19,31 +21,46 @@ export default defineComponent({
     const router = useRouter();
     const loading = ref(true);
 
-    const tableHeaders = ref([
-      { title: 'Name', key: 'name', },
-      { title: 'Email', key: 'email' },
-      { title: 'Age', key: 'age' },
-      { title: 'Actions', key: 'actions', sortable: false}
-    ]);
+    const arenas = ref([] as Array<Record<string, any>>);
+    const tableItems = ref([] as Array<Record<string, any>>);
 
-    const tableItems = ref([
-      { name: 'John Doe', email: 'john@example.com', age: 28 },
-      { name: 'Jane Smith', email: 'jane@example.com', age: 34 },
-      // Add more items as needed
-    ]);
+    const headerMapping = {
+      name: 'Nome',
+      created_at: 'Criado em ',
+      updated_at: 'Atualizado em'
+    };
+
+    const tableHeaders = computed(() => {
+        const keys = Object.keys(arenas.value[0]);
+        const headers = keys.map(key => ({ title: headerMapping[key] || key.charAt(0).toUpperCase() + key.slice(1),
+          key }))
+        headers.push({ title: 'Ações', key: 'actions', sortable: false });
+        return headers;
+    });
 
     onBeforeMount(async () => {
       {
         //admin@teste.com
         //123456
           try{
-            await authService.checkToken();
+            arenas.value = await arenaService.list();
+            arenas.value.forEach(arena => {
+              arena.created_at = utils.formatDate(arena.created_at);
+              arena.updated_at = utils.formatDate(arena.updated_at);
+            });
+
             loading.value = false;
+
           }catch(error){
             router.push('/login');
           }
       }
     });
+
+    watch(arenas, (newArenas:any) => {
+      tableItems.value = toRaw(newArenas);
+    });
+
     return {
       loading,
       tableHeaders,

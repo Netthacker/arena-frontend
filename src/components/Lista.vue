@@ -83,6 +83,9 @@ export default defineComponent({
       required: true,
     },
   },
+
+
+
   setup(props) {
     const dialog = ref(false);
     const dialogDelete = ref(false);
@@ -94,8 +97,12 @@ export default defineComponent({
 
 
     const filteredHeaders = computed(() => {
-       return props.headers.filter(header => header.key !== 'actions');
-    })
+      return props.headers.filter(header => {
+        const key = header.key.toLowerCase();
+        // Verifica se a chave é 'actions', 'created_at' ou 'updated_at' e retorna false se for
+        return !(key === 'id' || key === 'actions' || key === 'created_at' || key === 'updated_at');
+      });
+    });
     const close = () => {
       dialog.value = false;
       setTimeout(() => {

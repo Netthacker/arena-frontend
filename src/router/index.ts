@@ -10,8 +10,6 @@ import { createRouter, createWebHistory } from 'vue-router/auto'
 import login from '@/pages/login.vue';
 import dashboard from '@/pages/dashboard.vue';
 
-import authService from '../services/authService';
-
 
 const routes = [
   {
