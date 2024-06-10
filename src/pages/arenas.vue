@@ -26,50 +26,77 @@ export default defineComponent({
 
     const headerMapping = {
       name: 'Nome',
-      created_at: 'Criado em ',
+      created_at: 'Criado em',
       updated_at: 'Atualizado em'
     };
 
     const tableHeaders = computed(() => {
-        const keys = Object.keys(arenas.value[0]);
-        const headers = keys.map(key => ({ title: headerMapping[key] || key.charAt(0).toUpperCase() + key.slice(1),
-          key }))
-        headers.push({ title: 'Ações', key: 'actions', sortable: false });
-        return headers;
+      const keys = Object.keys(headerMapping);
+      const headers = keys.map(key => ({
+        title: headerMapping[key] || key.charAt(0).toUpperCase() + key.slice(1),
+        key
+      }));
+      headers.push({ title: 'Ações', key: 'actions', sortable: false });
+      return headers;
     });
 
     onBeforeMount(async () => {
-      {
-        //admin@teste.com
-        //123456
-          try{
-            arenas.value = await arenaService.list();
-            arenas.value.forEach(arena => {
-              arena.created_at = utils.formatDate(arena.created_at);
-              arena.updated_at = utils.formatDate(arena.updated_at);
-            });
+      try {
+        formatingArena();
 
-            loading.value = false;
-
-          }catch(error){
-            router.push('/login');
-          }
+        loading.value = false;
+      } catch (error) {
+        router.push('/login');
       }
     });
 
-    watch(arenas, (newArenas:any) => {
+    watch(arenas, (newArenas: any) => {
       tableItems.value = toRaw(newArenas);
     });
+
+    const formatingArena = async ()=>{
+        arenas.value = await arenaService.list();
+        arenas.value.forEach(arena => {
+          arena.created_at = utils.formatDate(arena.created_at);
+          arena.updated_at = utils.formatDate(arena.updated_at);
+        });
+    };
+
+    const createItem = async (item: Record<string, any>) => {
+        const newItem = await arenaService.create(item);
+        console.log(newItem)
+        if(newItem.error === ''){
+          await formatingArena()
+        }
+    };
+
+    const updateItem = async ({ index, item }: { index: number, item: Record<string, any> }) => {
+        const updatedItem = await arenaService.update({ index, item });
+        if(updatedItem.error ===''){
+          await formatingArena()
+        }
+    };
+
+    const deleteItem = async (index: number) => {
+        const deleted = await arenaService.delete(arenas.value[index].id);
+        if (deleted.error ===''){
+          await formatingArena()
+        }
+
+    };
 
     return {
       loading,
       tableHeaders,
-      tableItems
+      tableItems,
+      createItem,
+      updateItem,
+      deleteItem
     };
   },
-
 });
 </script>
+
 <template>
   <v-container v-if="loading">
     <v-row>
@@ -81,9 +108,9 @@ export default defineComponent({
   <v-app v-else>
     <v-row no-gutters>
       <v-col cols="auto">
-    <Sidebar />
+        <Sidebar />
       </v-col>
-   <v-col cols="12" style="padding: 0;">
+      <v-col cols="12" style="padding: 0;">
         <v-container>
           <v-row justify="center">
             <v-col cols="12" md="12">
@@ -91,23 +118,27 @@ export default defineComponent({
             </v-col>
           </v-row>
         </v-container>
-    <v-main class="dashboard-main">
-      <v-container>
-        <Lista :headers="tableHeaders" :items="tableItems"/>
-      </v-container>
-    </v-main>
-   </v-col>
-  </v-row>
+        <v-main class="dashboard-main">
+          <v-container>
+            <Lista
+              :headers="tableHeaders"
+              :items="tableItems"
+              @create-item="createItem"
+              @update-item="updateItem"
+              @delete-item="deleteItem"
+            />
+          </v-container>
+        </v-main>
+      </v-col>
+    </v-row>
   </v-app>
 </template>
 
 <style scoped>
 .dashboard-main {
-  padding-left: 20px; /* Ajusta conforme a largura do sidebar */
-  padding-top: 20px; /* Ajusta conforme a altura do header */
-  padding-right: 20px; /* Espaço à direita */
-  padding-bottom: 20px; /* Espaço na parte inferior */
+  padding-left: 20px;
+  padding-top: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
 }
 </style>
-
-

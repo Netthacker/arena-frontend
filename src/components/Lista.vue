@@ -1,3 +1,86 @@
+<script lang="ts">
+import { defineComponent, PropType, ref, computed } from 'vue';
+
+export default defineComponent({
+  name: 'Lista',
+  props: {
+    headers: {
+      type: Array as PropType<Array<{ text: string; value: string }>>,
+      required: true,
+    },
+    items: {
+      type: Array as PropType<Array<Record<string, any>>>,
+      required: true,
+    },
+  },
+  setup(props, { emit }) {
+    const dialog = ref(false);
+    const dialogDelete = ref(false);
+    const editedIndex = ref(-1);
+    const editedItem = ref({} as Record<string, any>);
+    const defaultItem = {} as Record<string, any>;
+
+    const filteredHeaders = computed(() => {
+      return props.headers.filter(header => {
+        const key = header.key.toLowerCase();
+        return !(key === 'id' || key === 'actions' || key === 'created_at' || key === 'updated_at');
+      });
+    });
+
+    const close = () => {
+      dialog.value = false;
+      setTimeout(() => {
+        editedItem.value = { ...defaultItem };
+        editedIndex.value = -1;
+      }, 300);
+    };
+
+    const save = () => {
+      if (editedIndex.value > -1) {
+        emit('update-item', { index: editedIndex.value, item: editedItem.value });
+      } else {
+        emit('create-item', editedItem.value);
+      }
+      close();
+    };
+
+    const editItem = (item: Record<string, any>) => {
+      editedIndex.value = props.items.indexOf(item);
+      editedItem.value = { ...item };
+      dialog.value = true;
+    };
+
+    const deleteItem = (item: Record<string, any>) => {
+      editedIndex.value = props.items.indexOf(item);
+      dialogDelete.value = true;
+    };
+
+    const deleteItemConfirm = () => {
+      emit('delete-item', editedIndex.value);
+      closeDelete();
+    };
+
+    const closeDelete = () => {
+      dialogDelete.value = false;
+    };
+
+    return {
+      dialog,
+      dialogDelete,
+      editedIndex,
+      editedItem,
+      close,
+      save,
+      editItem,
+      deleteItem,
+      deleteItemConfirm,
+      closeDelete,
+      filteredHeaders
+    };
+  },
+});
+</script>
+
 <template>
   <v-container>
     <v-data-table
@@ -67,96 +150,6 @@
     </v-data-table>
   </v-container>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType, ref, computed } from 'vue';
-
-export default defineComponent({
-  name: 'Lista',
-  props: {
-    headers: {
-      type: Array as PropType<Array<{ text: string; value: string }>>,
-      required: true,
-    },
-    items: {
-      type: Array as PropType<Array<Record<string, any>>>,
-      required: true,
-    },
-  },
-
-
-
-  setup(props) {
-    const dialog = ref(false);
-    const dialogDelete = ref(false);
-    const editedIndex = ref(-1);
-    const editedItem = ref({} as Record<string, any>);
-    const defaultItem = {} as Record<string, any>;
-    const selectedFilter = ref('');
-
-
-
-    const filteredHeaders = computed(() => {
-      return props.headers.filter(header => {
-        const key = header.key.toLowerCase();
-        // Verifica se a chave é 'actions', 'created_at' ou 'updated_at' e retorna false se for
-        return !(key === 'id' || key === 'actions' || key === 'created_at' || key === 'updated_at');
-      });
-    });
-    const close = () => {
-      dialog.value = false;
-      setTimeout(() => {
-        editedItem.value = { ...defaultItem };
-        editedIndex.value = -1;
-      }, 300);
-    };
-
-    const save = () => {
-      if (editedIndex.value > -1) {
-        Object.assign(props.items[editedIndex.value], editedItem.value);
-      } else {
-        props.items.push(editedItem.value);
-      }
-      close();
-    };
-
-    const editItem = (item: Record<string, any>) => {
-      editedIndex.value = props.items.indexOf(item);
-      editedItem.value = { ...item };
-      dialog.value = true;
-    };
-
-    const deleteItem = (item: Record<string, any>) => {
-      editedIndex.value = props.items.indexOf(item);
-      dialogDelete.value = true;
-    };
-
-    const deleteItemConfirm = () => {
-      props.items.splice(editedIndex.value, 1);
-      closeDelete();
-    };
-
-    const closeDelete = () => {
-      dialogDelete.value = false;
-    };
-
-    return {
-      dialog,
-      dialogDelete,
-      editedIndex,
-      editedItem,
-      selectedFilter,
-      close,
-      save,
-      editItem,
-      deleteItem,
-      deleteItemConfirm,
-      closeDelete,
-      filteredHeaders
-    };
-  },
-});
-</script>
 
 <style scoped>
 .v-container {
