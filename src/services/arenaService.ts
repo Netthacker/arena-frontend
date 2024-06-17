@@ -1,9 +1,5 @@
 import axiosInstance from './axiosInstance';
-import localStorageService from './localStorageService';
-
-//const API_URL = 'http://arena.test/api';
-const API_URL = 'http://127.0.0.1:8000/api';
-
+import API_URL from './api';
 export default {
 
   async list(){
