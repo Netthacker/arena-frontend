@@ -26,6 +26,7 @@ export default defineComponent({
 
     const filteredHeaders = computed(() => {
       return props.headers.filter(header => {
+        if (!header.key) return false;
         const key = header.key.toLowerCase();
         return !(key === 'id' || key === 'actions' || key === 'created_at' || key === 'updated_at');
       });

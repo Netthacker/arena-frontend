@@ -32,7 +32,10 @@ export default defineComponent({
 
     const tableHeaders = computed(() => {
       const keys = Object.keys(headerMapping);
-      const headers = keys.map(key => ({title: headerMapping[key]}));
+      const headers = keys.map(key => ({
+        title: headerMapping[key] || key.charAt(0).toUpperCase() + key.slice(1),
+        key
+      }));
       headers.push({ title: 'Ações', key: 'actions', sortable: false });
       return headers;
     });
@@ -68,16 +71,16 @@ export default defineComponent({
     };
 
     const updateItem = async ({ index, item }: { index: number, item: Record<string, any> }) => {
-        const updatedItem = await arenaService.update({ index, item });
+        const updatedItem = await tableService.update({ index, item });
         if(updatedItem.error ===''){
-          await formatingArena()
+          await formatingTables()
         }
     };
 
     const deleteItem = async (index: number) => {
-        const deleted = await arenaService.delete(arenas.value[index].id);
+        const deleted = await tableService.delete(mesas.value[index].id);
         if (deleted.error ===''){
-          await formatingArena()
+          await formatingTables()
         }
 
     };
