@@ -7,6 +7,7 @@ import Sidebar from '@/components/Sidebar.vue';
 import Lista from '@/components/Lista.vue';
 
 import tableService from '../services/tableService';
+import arenaService from '../services/arenaService';
 import utils from '../plugins/utils';
 
 export default defineComponent({
@@ -23,9 +24,12 @@ export default defineComponent({
 
     const mesas = ref([] as Array<Record<string, any>>);
     const tableItems = ref([] as Array<Record<string, any>>);
+    const arenas = ref([] as Array<Record<string,any>>);
+    const arenaItems = ref([] as Array<Record<string,any>>);
 
     const headerMapping = {
       name: 'Nome',
+      arenainventory_id: 'Arena',
       created_at: 'Criado em',
       updated_at: 'Atualizado em'
     };
@@ -53,9 +57,13 @@ export default defineComponent({
     watch(mesas, (newTables: any) => {
       tableItems.value = toRaw(newTables);
     });
+    watch(arenas,(newArenas:any)=>{
+      arenaItems.value = toRaw(newArenas);
+    });
 
     const formatingTables = async ()=>{
         mesas.value = await tableService.list();
+        arenas.value = await arenaService.list();
         mesas.value.forEach(mesa => {
           mesa.created_at = utils.formatDate(mesa.created_at);
           mesa.updated_at = utils.formatDate(mesa.updated_at);
@@ -91,7 +99,8 @@ export default defineComponent({
       tableItems,
       createItem,
       updateItem,
-      deleteItem
+      deleteItem,
+      arenaItems
     };
   },
 });
@@ -123,6 +132,7 @@ export default defineComponent({
             <Lista
               :headers="tableHeaders"
               :items="tableItems"
+              :arenas="arenaItems"
               namePopup="Criar Mesas"
               @create-item="createItem"
               @update-item="updateItem"
