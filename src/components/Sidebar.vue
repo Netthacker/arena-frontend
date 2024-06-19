@@ -73,6 +73,14 @@ export default defineComponent({
         @click="navigate('/arenas')"
       ></v-list-item>
       <v-list-item
+        :active="route.path === '/tables'"
+        prepend-icon="mdi-table-account"
+        title="Mesas"
+        value="tables"
+        :class="{'selected-item': route.path === '/tables'}"
+        @click="navigate('/tables')"
+      ></v-list-item>
+      <v-list-item
         :active="route.path === '/requests'"
         prepend-icon="mdi-application-edit"
         title="Comandas"

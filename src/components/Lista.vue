@@ -12,6 +12,10 @@ export default defineComponent({
       type: Array as PropType<Array<Record<string, any>>>,
       required: true,
     },
+    namePopup:{
+      type: String as PropType<string>,
+      required:true,
+    }
   },
   setup(props, { emit }) {
     const dialog = ref(false);
@@ -95,7 +99,7 @@ export default defineComponent({
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ props }">
               <v-btn class="mb-2" color="primary" dark v-bind="props">
-                Criar Arena
+                {{namePopup}}
               </v-btn>
             </template>
             <v-card>

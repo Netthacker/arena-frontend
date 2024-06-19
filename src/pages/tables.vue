@@ -6,11 +6,11 @@ import Header from '@/components/Header.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import Lista from '@/components/Lista.vue';
 
-import arenaService from '../services/arenaService';
+import tableService from '../services/tableService';
 import utils from '../plugins/utils';
 
 export default defineComponent({
-  name: 'Arenas',
+  name: 'Tables',
   components: {
     Header,
     Sidebar,
@@ -21,7 +21,7 @@ export default defineComponent({
     const router = useRouter();
     const loading = ref(true);
 
-    const arenas = ref([] as Array<Record<string, any>>);
+    const mesas = ref([] as Array<Record<string, any>>);
     const tableItems = ref([] as Array<Record<string, any>>);
 
     const headerMapping = {
@@ -32,17 +32,14 @@ export default defineComponent({
 
     const tableHeaders = computed(() => {
       const keys = Object.keys(headerMapping);
-      const headers = keys.map(key => ({
-        title: headerMapping[key] || key.charAt(0).toUpperCase() + key.slice(1),
-        key
-      }));
+      const headers = keys.map(key => ({title: headerMapping[key]}));
       headers.push({ title: 'Ações', key: 'actions', sortable: false });
       return headers;
     });
 
     onBeforeMount(async () => {
       try {
-        formatingArena();
+        formatingTables();
 
         loading.value = false;
       } catch (error) {
@@ -50,23 +47,23 @@ export default defineComponent({
       }
     });
 
-    watch(arenas, (newArenas: any) => {
-      tableItems.value = toRaw(newArenas);
+    watch(mesas, (newTables: any) => {
+      tableItems.value = toRaw(newTables);
     });
 
-    const formatingArena = async ()=>{
-        arenas.value = await arenaService.list();
-        arenas.value.forEach(arena => {
-          arena.created_at = utils.formatDate(arena.created_at);
-          arena.updated_at = utils.formatDate(arena.updated_at);
+    const formatingTables = async ()=>{
+        mesas.value = await tableService.list();
+        mesas.value.forEach(mesa => {
+          mesa.created_at = utils.formatDate(mesa.created_at);
+          mesa.updated_at = utils.formatDate(mesa.updated_at);
         });
     };
 
     const createItem = async (item: Record<string, any>) => {
-        const newItem = await arenaService.create(item);
+        const newItem = await tableService.create(item);
         console.log(newItem)
         if(newItem.error === ''){
-          await formatingArena()
+          await formatingTables()
         }
     };
 
@@ -114,7 +111,7 @@ export default defineComponent({
         <v-container>
           <v-row justify="center">
             <v-col cols="12" md="12">
-              <Header name="Arenas"/>
+              <Header name="Mesas"/>
             </v-col>
           </v-row>
         </v-container>
@@ -123,7 +120,7 @@ export default defineComponent({
             <Lista
               :headers="tableHeaders"
               :items="tableItems"
-              namePopup="Criar Arena"
+              namePopup="Criar Mesas"
               @create-item="createItem"
               @update-item="updateItem"
               @delete-item="deleteItem"
