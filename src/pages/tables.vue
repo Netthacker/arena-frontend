@@ -79,6 +79,7 @@ export default defineComponent({
     };
 
     const updateItem = async ({ index, item }: { index: number, item: Record<string, any> }) => {
+        console.log(index);
         const updatedItem = await tableService.update({ index, item });
         if(updatedItem.error ===''){
           await formatingTables()

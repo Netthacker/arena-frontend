@@ -133,7 +133,10 @@ export default defineComponent({
                         clearable
                         v-model="editedItem[header.key]"
                         :label="header.title"
-                        :items="arenas.map(arena => arena.name)"
+                        :items="arenas"
+                        item-value="id"
+                        item-title="name"
+
                       ></v-select>
                     </v-col>
                   </v-row>
